@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:external_path/external_path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:zreader/database.dart';
 import 'package:zreader/entities/local_file.dart';
+import 'package:zreader/service_locator.dart';
 
 class LocalFileRepository {
   Future<List<LocalFile>> listLocalBookFiles() async {
@@ -28,8 +30,11 @@ class LocalFileRepository {
     }
     return await directory.list(recursive: true).where((entity) {
       return entity.path.endsWith(".txt");
-    }).map((event) {
-      return LocalFile(event.path);
+    }).asyncMap((event) async {
+      var f = LocalFile(event.path);
+      var inShelf = await locator<AppDatabase>().bookRepository.findByContentUri(f.toContentUri());
+      f.existsInBookshelf = inShelf != null;
+      return f;
     }).toList();
   }
 }

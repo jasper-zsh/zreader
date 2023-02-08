@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zreader/service_locator.dart';
 import 'package:zreader/ui/bookshelf.dart';
 import 'package:zreader/ui/file_list.dart';
+import 'package:zreader/ui/page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -92,11 +93,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
+      // body: Bookshelf(),
       body: Bookshelf(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return FileList();
+            return Scaffold(
+              body: FileList(),
+            );
           }));
         },
         tooltip: 'Increment',

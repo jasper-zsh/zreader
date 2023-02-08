@@ -5,6 +5,7 @@ import 'package:zreader/domain/book.dart';
 import 'package:zreader/entities/book.dart';
 import 'package:zreader/service_locator.dart';
 import 'package:zreader/services/book.dart';
+import 'package:zreader/ui/reader.dart';
 
 var bookshelfUpdated = Event();
 
@@ -17,6 +18,14 @@ class Bookshelf extends StatefulWidget {
 }
 
 class BookshelfState extends State<Bookshelf> {
+  BookshelfState() {
+    bookshelfUpdated.subscribe((args) {
+      setState(() {
+
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<BookDO>>(
@@ -42,6 +51,15 @@ class BookshelfState extends State<Bookshelf> {
   }
 
   Widget _buildBook(BuildContext context, BookDO book) {
-    return Card();
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return ReaderWidget(book);
+        }));
+      },
+      child: Card(
+        child: Text(book.name),
+      ),
+    );
   }
 }
