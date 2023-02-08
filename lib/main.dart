@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zreader/service_locator.dart';
 import 'package:zreader/ui/bookshelf.dart';
+import 'package:zreader/ui/file_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,7 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Bookshelf(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return FileList();
+          }));
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
