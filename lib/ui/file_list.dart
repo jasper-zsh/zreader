@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 import 'package:zreader/database.dart';
+import 'package:zreader/domain/book.dart';
 import 'package:zreader/entities/book.dart';
 import 'package:zreader/entities/local_file.dart';
 import 'package:zreader/repositories/local_file.dart';
@@ -33,8 +36,11 @@ class FileList extends StatelessWidget {
 
   Widget _buildFileItem(BuildContext context, LocalFile file) {
     return GestureDetector(
-      onTap: () {
-        locator<AppDatabase>().bookRepository.save(Book(0, file.name, file.toContentUri()));
+      onTap: () async {
+        var book = Book(name: file.name, contentUri: file.toContentUri());
+        var bookDO = BookDO(book);
+        await bookDO.save();
+        await bookDO.chapterProvider?.parse();
         bookshelfUpdated.broadcast();
         Navigator.pop(context);
       },

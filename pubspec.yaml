@@ -36,6 +36,8 @@ dependencies:
   path_provider: ^2.0.12
   permission_handler: ^10.2.0
   external_path:
+  uuid: ^3.0.7
+  json_annotation: ^4.8.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -47,6 +49,7 @@ dev_dependencies:
     sdk: flutter
   floor_generator: ^1.4.1
   build_runner: ^2.1.2
+  json_serializable: ^6.6.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

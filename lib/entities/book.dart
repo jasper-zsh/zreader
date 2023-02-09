@@ -3,10 +3,14 @@ import 'package:floor/floor.dart';
 @entity
 @Index(value: ['contentUri'], unique: true)
 class Book {
-  @PrimaryKey(autoGenerate: true)
-  int id;
+  @primaryKey
+  String? id;
   String name;
   String contentUri;
 
-  Book(this.id, this.name, this.contentUri);
+  Book({
+    this.id,
+    required this.name,
+    required this.contentUri
+  });
 }
