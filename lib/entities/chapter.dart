@@ -3,9 +3,9 @@ import 'package:floor/floor.dart';
 @entity
 @Index(value: ['bookId'])
 class Chapter {
-  @primaryKey
-  String? id;
-  String bookId;
+  @PrimaryKey(autoGenerate: true)
+  int? id;
+  int bookId;
   String name;
   String provider;
   String data;

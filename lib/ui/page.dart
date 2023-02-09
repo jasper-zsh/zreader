@@ -1,9 +1,17 @@
+import 'dart:convert';
 import 'dart:ui' as ui;
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:zreader/domain/chapter.dart';
+import 'package:zreader/entities/book_page.dart';
 
 class PageWidget extends StatefulWidget {
+  final ChapterDO chapter;
+
+  PageWidget(this.chapter): super(key: Key(md5.convert(utf8.encode(chapter.content!)).toString()));
+
   @override
   State<StatefulWidget> createState() {
     return PageState();
@@ -13,64 +21,51 @@ class PageWidget extends StatefulWidget {
 class PageState extends State<PageWidget> {
   double? width;
   double? height;
-  Widget? rendered;
+  BookPage? bookPage;
+  Future<Widget>? imageFuture;
 
   @override
   Widget build(BuildContext context) {
-    if (rendered != null) {
+    if (bookPage != null) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         var width = context.size!.width;
         var height = context.size!.height;
         if (width != this.width || height != this.height) {
           setState(() {
-            rendered = null;
+            bookPage = null;
           });
         }
       });
-      return rendered!;
+      return _buildPage(context);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       width = context.size!.width;
       height = context.size!.height;
-      var rec = ui.PictureRecorder();
-      var canvas = Canvas(rec);
-
-      var pbFactory = () {
-        return ui.ParagraphBuilder(ui.ParagraphStyle(
-        ))..pushStyle(ui.TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-        ));
-      };
-      var sb = StringBuffer();
-      ui.Paragraph? validParagraph;
-      while (true) {
-        sb.write('Hello paragraph');
-        var pb = pbFactory();
-        pb.addText(sb.toString());
-        var p = pb.build();
-        p.layout(ui.ParagraphConstraints(width: width!));
-        if (p.height < height!) {
-          validParagraph = p;
-        } else {
-          break;
-        }
-      }
-      if (validParagraph != null) {
-        canvas.drawParagraph(validParagraph, Offset.zero);
-      }
-
-      var pic = rec.endRecording();
-      var img = await pic.toImage(width!.floor(), height!.floor());
-      var data = await img.toByteData(format: ui.ImageByteFormat.png);
       setState(() {
-        rendered = Image.memory(
-          data!.buffer.asUint8List(),
-          width: width,
-          height: height,
+        bookPage = BookPage(
+          chapter: widget.chapter,
+          start: 0,
+          width: width!,
+          height: height!,
+          padding: 12
         );
+        imageFuture = bookPage!.render();
       });
     });
     return Container();
+  }
+
+  Widget _buildPage(BuildContext context) {
+    return FutureBuilder(
+      future: imageFuture!,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(
+            child: Text("Rendering..."),
+          );
+        }
+        return snapshot.requireData;
+      },
+    );
   }
 }

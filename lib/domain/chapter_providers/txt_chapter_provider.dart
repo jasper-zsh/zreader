@@ -19,6 +19,7 @@ class TxtChapterData {
   TxtChapterData(this.start, this.end);
 
   factory TxtChapterData.fromJson(Map<String, dynamic> json) => _$TxtChapterDataFromJson(json);
+  factory TxtChapterData.fromJsonString(String json) => TxtChapterData.fromJson(jsonDecode(json));
   Map<String, dynamic> toJson() => _$TxtChapterDataToJson(this);
 }
 
@@ -26,6 +27,7 @@ class TxtChapterProvider extends ChapterProvider {
   static const NAME = 'txt';
   BookDO book;
   File txtFile;
+  String? content;
 
   TxtChapterProvider(this.book, this.txtFile);
 
@@ -33,7 +35,7 @@ class TxtChapterProvider extends ChapterProvider {
   Future<List<ChapterDO>> listAllChapters() async {
     var chapters = await locator<AppDatabase>().chapterRepository.findByBookId(book.book.id!);
     return chapters.map((e) {
-      return ChapterDO(e);
+      return ChapterDO(e, this);
     }).toList();
   }
 
@@ -56,12 +58,21 @@ class TxtChapterProvider extends ChapterProvider {
           provider: NAME,
           data: jsonEncode(data)
       );
-      var chapter = ChapterDO(entity);
+      var chapter = ChapterDO(entity, this);
       chapters.add(chapter);
     }
     await locator<AppDatabase>().chapterRepository.deleteByBookId(book.book.id!);
     chapters.forEach((element) async {
       await element.save();
     });
+  }
+
+  @override
+  Future<String> loadContent(ChapterDO chapter) async {
+    if (content == null) {
+      content = await txtFile.readAsString();
+    }
+    var data = TxtChapterData.fromJsonString(chapter.data);
+    return content!.substring(data.start, data.end);
   }
 }

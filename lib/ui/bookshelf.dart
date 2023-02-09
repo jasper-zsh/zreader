@@ -5,6 +5,7 @@ import 'package:zreader/domain/book.dart';
 import 'package:zreader/entities/book.dart';
 import 'package:zreader/service_locator.dart';
 import 'package:zreader/services/book.dart';
+import 'package:zreader/ui/chapter_list.dart';
 import 'package:zreader/ui/reader.dart';
 
 var bookshelfUpdated = Event();

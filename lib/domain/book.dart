@@ -21,18 +21,16 @@ class BookDO {
     }
   }
 
+  int? get id {
+    return book.id;
+  }
+
   String get name {
     return book.name;
   }
 
   Future<void> save() async {
     var repo = locator<AppDatabase>().bookRepository;
-    var origin = await repo.findByContentUri(book.contentUri);
-    if (origin != null) {
-      book.id = origin.id;
-      return;
-    }
-    book.id = const Uuid().v1();
-    await repo.insertBook(book);
+    await repo.save(book);
   }
 }

@@ -9,6 +9,11 @@ abstract class BookRepository {
   Future<List<Book>> findAllBooks();
   @Query('SELECT * FROM Book WHERE contentUri = :contentUri')
   Future<Book?> findByContentUri(String contentUri);
-  @insert
-  Future<void> insertBook(Book book);
+
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<int> insertBook(Book book);
+  Future<void> save(Book book) async {
+    var id = await insertBook(book);
+    book.id = id;
+  }
 }

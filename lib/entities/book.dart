@@ -1,10 +1,13 @@
 import 'package:floor/floor.dart';
 
-@entity
-@Index(value: ['contentUri'], unique: true)
+@Entity(
+  indices: [
+    Index(value: ['contentUri'], unique: true)
+  ]
+)
 class Book {
-  @primaryKey
-  String? id;
+  @PrimaryKey(autoGenerate: true)
+  int? id;
   String name;
   String contentUri;
 
